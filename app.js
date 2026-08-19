@@ -262,6 +262,34 @@ function renderFeed(){
    <div class="replybox"><input data-post="${p.id}" placeholder="${target?`@${esc(getChar(target.who)?.name||'친구')}에게 답글`:'답글 게시하기'}"><button data-reply="${p.id}">답글</button></div>
    </div></div></article>`;
  }).join('');
+ $$('[data-post-menu]').forEach(b=>b.onclick=()=>{
+  const id=Number(b.dataset.postMenu);
+  const p=state.posts.find(x=>x.id===id);
+
+  if(!p || p.char!=='me') return;
+
+  const choice=prompt(
+    '내 게시물 관리\n\n1 = 수정\n2 = 삭제'
+  );
+
+  if(choice==='1'){
+    const text=prompt('게시물 수정',p.text);
+
+    if(text!==null && text.trim()){
+      p.text=text.trim();
+      save();
+      renderFeed();
+    }
+  }
+
+  if(choice==='2'){
+    if(confirm('이 게시물을 삭제할까요?')){
+      state.posts=state.posts.filter(x=>x.id!==id);
+      save();
+      renderFeed();
+    }
+  }
+});
  $$('[data-reply]').forEach(b=>b.onclick=()=>replyToPost(Number(b.dataset.reply)));
  $$('[data-comment-reply]').forEach(b=>b.onclick=()=>{
    const pid=Number(b.dataset.commentReply), cid=b.dataset.commentId;
