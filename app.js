@@ -466,6 +466,7 @@ $('#postBtn').onclick=()=>{const text=$('#postInput').value.trim();if(!text)retu
 },450)};
 $('#sendChatBtn').onclick=sendChat;$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)sendChat()});
 let avatarData=null;
+let pendingAvatarData=null;
 function fillFriendCountries(selected='대한민국'){
  const el=$('#friendCountry'); if(!el)return;
  el.innerHTML=Object.keys(worldPlaces).map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join('');
@@ -535,13 +536,56 @@ $('#avatarInput').onchange=e=>{
       const ctx=canvas.getContext('2d');
       ctx.drawImage(img,0,0,w,h);
 
-      avatarData=canvas.toDataURL('image/jpeg',0.8);
+      pendingAvatarData=canvas.toDataURL('image/jpeg',0.75);
 
-      $('#avatarPreview').src=avatarData;
+      $('#avatarPreview').src=pendingAvatarData;
       $('#avatarPreview').style.display='block';
       $('#avatarPlaceholder').style.display='none';
+
+      let btn=document.querySelector('#avatarSaveBtn');
+
+      if(!btn){
+        btn=document.createElement('button');
+        btn.type='button';
+        btn.id='avatarSaveBtn';
+        btn.textContent='사진 저장';
+        btn.className='btn-primary';
+
+        const upload=document.querySelector('.upload');
+        upload.insertAdjacentElement('afterend',btn);
+      }
+
+      btn.style.display='block';
+
+      btn.onclick=()=>{
+        avatarData=pendingAvatarData;
+
+        const editingId=$('#editingId').value;
+
+        if(editingId){
+          const c=getChar(editingId);
+
+          if(c){
+            c.avatar=avatarData;
+            save();
+            renderFriends();
+            renderChats();
+            renderMessages();
+            renderFeed();
+
+            btn.textContent='사진 저장됨 ✓';
+          }
+        }else{
+          btn.textContent='사진 선택 완료 ✓';
+        }
+      };
     };
 
+    img.src=r.result;
+  };
+
+  r.readAsDataURL(f);
+};
     img.src=r.result;
   };
 
