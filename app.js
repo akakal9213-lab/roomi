@@ -252,7 +252,7 @@ function renderFeed(){
    const c=getChar(p.char);
    const target=replyTargets[p.id];
    return `<article class="post">${av(c)}<div class="post-main">
-   <div class="post-meta"><b>${c?esc(c.name):'나'}</b><span class="handle">@${c?esc(c.handle):'me'}</span><span class="time">· ${esc(p.time)}</span><button class="more">···</button></div>
+   <div class="post-meta"><b>${c?esc(c.name):'나'}</b><span class="handle">@${c?esc(c.handle):'me'}</span><span class="time">· ${esc(p.time)}</span>${!c ? `<button class="more" data-post-menu="${p.id}">···</button>` : ''}</div>
    <div class="post-text">${esc(p.text)}</div>
    <div class="actions"><button class="action">♡ ${p.likes||0}</button><button class="action">◯ ${(p.comments||[]).length}</button><button class="action">↗</button><button class="action">⌑</button></div>
    <div class="comments">
