@@ -304,7 +304,27 @@ async function aiReplyToSpecificComment(p,mine,target,targetChar){
      const extra=await callBrain(owner,mine.text,{channel:'thread_bystander',post:p,thread:p.comments,targetComment:target});
      if(extra)p.comments.push(newComment(owner.id,extra,mine.id));
    }
- }catch(e){console.error(e);delete p.replyStatus;}
+ }catch(e){
+  console.error(e);
+  delete p.replyStatus;
+
+  const fallback=lightweightReply(
+    targetChar,
+    mine.text,
+    {
+      channel:'comment_reply',
+      post:p,
+      thread:p.comments,
+      targetComment:target
+    }
+  );
+
+  if(fallback){
+    p.comments.push(
+      newComment(targetChar.id,fallback,mine.id)
+    );
+  }
+ }
  save();renderFeed();
 }
 async function aiReplyToPost(p,userText){
