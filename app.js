@@ -466,7 +466,6 @@ $('#postBtn').onclick=()=>{const text=$('#postInput').value.trim();if(!text)retu
 },450)};
 $('#sendChatBtn').onclick=sendChat;$('#chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)sendChat()});
 let avatarData=null;
-let pendingAvatarData=null;
 function fillFriendCountries(selected='대한민국'){
  const el=$('#friendCountry'); if(!el)return;
  el.innerHTML=Object.keys(worldPlaces).map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join('');
@@ -507,90 +506,7 @@ function updateFriendWeatherPreview(){
  try{local=new Intl.DateTimeFormat('ko-KR',{timeZone:p.tz,weekday:'short',hour:'2-digit',minute:'2-digit'}).format(new Date())}catch{}
  el.textContent=`${country} · ${city} · 현지 ${local} · 실제 날씨 자동 반영`;
 }
-$('#avatarInput').onchange=e=>{
-  const f=e.target.files[0];
-  if(!f)return;
-
-  const r=new FileReader();
-
-  r.onload=()=>{
-    const img=new Image();
-
-    img.onload=()=>{
-      const maxSize=500;
-      let w=img.width;
-      let h=img.height;
-
-      if(w>h && w>maxSize){
-        h=Math.round(h*maxSize/w);
-        w=maxSize;
-      }else if(h>=w && h>maxSize){
-        w=Math.round(w*maxSize/h);
-        h=maxSize;
-      }
-
-      const canvas=document.createElement('canvas');
-      canvas.width=w;
-      canvas.height=h;
-
-      const ctx=canvas.getContext('2d');
-      ctx.drawImage(img,0,0,w,h);
-
-      pendingAvatarData=canvas.toDataURL('image/jpeg',0.75);
-
-      $('#avatarPreview').src=pendingAvatarData;
-      $('#avatarPreview').style.display='block';
-      $('#avatarPlaceholder').style.display='none';
-
-      let btn=document.querySelector('#avatarSaveBtn');
-
-      if(!btn){
-        btn=document.createElement('button');
-        btn.type='button';
-        btn.id='avatarSaveBtn';
-        btn.textContent='사진 저장';
-        btn.className='btn-primary';
-
-        const upload=document.querySelector('.upload');
-        upload.insertAdjacentElement('afterend',btn);
-      }
-
-      btn.style.display='block';
-
-      btn.onclick=()=>{
-        avatarData=pendingAvatarData;
-
-        const editingId=$('#editingId').value;
-
-        if(editingId){
-          const c=getChar(editingId);
-
-          if(c){
-            c.avatar=avatarData;
-            save();
-            renderFriends();
-            renderChats();
-            renderMessages();
-            renderFeed();
-
-            btn.textContent='사진 저장됨 ✓';
-          }
-        }else{
-          btn.textContent='사진 선택 완료 ✓';
-        }
-      };
-    };
-
-    img.src=r.result;
-  };
-
-  r.readAsDataURL(f);
-};
-    img.src=r.result;
-  };
-
-  r.readAsDataURL(f);
-};
+$('#avatarInput').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{avatarData=r.result;$('#avatarPreview').src=avatarData;$('#avatarPreview').style.display='block';$('#avatarPlaceholder').style.display='none'};r.readAsDataURL(f)};
 $('#friendForm').addEventListener('submit',e=>{
  if(e.submitter?.value==='cancel')return;
  e.preventDefault();
