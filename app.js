@@ -262,17 +262,32 @@ function renderFeed(){
    <div class="replybox"><input data-post="${p.id}" placeholder="${target?`@${esc(getChar(target.who)?.name||'친구')}에게 답글`:'답글 게시하기'}"><button data-reply="${p.id}">답글</button></div>
    </div></div></article>`;
  }).join('');
-$$('[data-post-menu]').forEach(b=>b.onclick=()=>{
+$$('[data-post-menu]').forEach(b=>b.onclick=(e)=>{
+  e.stopPropagation();
+
   const id=Number(b.dataset.postMenu);
   const p=state.posts.find(x=>x.id===id);
 
   if(!p || p.char!=='me') return;
 
-  const choice=prompt(
-    '내 게시물 관리\n\n1 = 수정\n2 = 삭제'
-  );
+  document.querySelectorAll('.post-manage-menu')
+    .forEach(x=>x.remove());
 
-  if(choice==='1'){
+  const menu=document.createElement('div');
+  menu.className='post-manage-menu';
+
+  menu.innerHTML=`
+    <button type="button" data-edit-post>수정</button>
+    <button type="button" data-delete-post class="delete">삭제</button>
+  `;
+
+  b.parentElement.style.position='relative';
+  b.parentElement.appendChild(menu);
+
+  menu.querySelector('[data-edit-post]').onclick=(ev)=>{
+    ev.stopPropagation();
+    menu.remove();
+
     const text=prompt('게시물 수정',p.text);
 
     if(text!==null && text.trim()){
@@ -281,16 +296,19 @@ $$('[data-post-menu]').forEach(b=>b.onclick=()=>{
       save();
       renderFeed();
     }
-  }
+  };
 
-  if(choice==='2'){
+  menu.querySelector('[data-delete-post]').onclick=(ev)=>{
+    ev.stopPropagation();
+    menu.remove();
+
     if(confirm('이 게시물을 삭제할까요?')){
       state.posts=state.posts.filter(x=>x.id!==id);
       delete replyTargets[id];
       save();
       renderFeed();
     }
-  }
+  };
 });
  $$('[data-reply]').forEach(b=>b.onclick=()=>replyToPost(Number(b.dataset.reply)));
  $$('[data-comment-reply]').forEach(b=>b.onclick=()=>{
