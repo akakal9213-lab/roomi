@@ -506,7 +506,80 @@ function updateFriendWeatherPreview(){
  try{local=new Intl.DateTimeFormat('ko-KR',{timeZone:p.tz,weekday:'short',hour:'2-digit',minute:'2-digit'}).format(new Date())}catch{}
  el.textContent=`${country} · ${city} · 현지 ${local} · 실제 날씨 자동 반영`;
 }
-$('#avatarInput').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{avatarData=r.result;$('#avatarPreview').src=avatarData;$('#avatarPreview').style.display='block';$('#avatarPlaceholder').style.display='none'};r.readAsDataURL(f)};
+$('#avatarInput').onchange=e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    const img=new Image();
+
+    img.onload=()=>{
+      try{
+        const size=320;
+
+        const canvas=document.createElement('canvas');
+        canvas.width=size;
+        canvas.height=size;
+
+        const ctx=canvas.getContext('2d');
+
+        const scale=Math.max(
+          size/img.width,
+          size/img.height
+        );
+
+        const w=img.width*scale;
+        const h=img.height*scale;
+
+        const x=(size-w)/2;
+        const y=(size-h)/2;
+
+        ctx.drawImage(img,x,y,w,h);
+
+        avatarData=canvas.toDataURL(
+          'image/jpeg',
+          0.72
+        );
+
+        $('#avatarPreview').src=avatarData;
+        $('#avatarPreview').style.display='block';
+        $('#avatarPlaceholder').style.display='none';
+
+        const editingId=$('#editingId').value;
+
+        if(editingId){
+          const c=getChar(editingId);
+
+          if(c){
+            c.avatar=avatarData;
+
+            save();
+            renderFriends();
+            renderChats();
+            renderMessages();
+            renderFeed();
+
+            alert('프로필 사진이 저장됐어요.');
+          }
+        }
+
+      }catch(err){
+        console.error(err);
+        alert('사진 저장에 실패했어요.');
+      }
+    };
+
+    img.onerror=()=>{
+      alert('이 사진을 불러오지 못했어요.');
+    };
+
+    img.src=reader.result;
+  };
+
+  reader.readAsDataURL(f);
+};
 $('#friendForm').addEventListener('submit',e=>{
  if(e.submitter?.value==='cancel')return;
  e.preventDefault();
