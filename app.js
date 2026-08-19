@@ -276,7 +276,10 @@ function renderFeed(){
 function replyToPost(id){
  const p=state.posts.find(x=>x.id===id); if(!p)return;
  const input=$(`input[data-post="${id}"]`), text=input?.value.trim(); if(!text)return;
- const target=replyTargets[id]||null;
+ let target=replyTargets[id]||null;
+if(!target){
+  target=[...(p.comments||[])].reverse().find(x=>x.who!=='me')||null;
+}
  const mine=newComment('me',text,target?.id||null);
  p.comments.push(mine); input.value=''; save(); renderFeed();
  if(target&&target.who!=='me'){
