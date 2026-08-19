@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>ROOMI</title>
+<link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="left">
+    <div class="logo">R</div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="feed"><span class="ico">⌂</span><span>홈</span></button>
+      <button class="nav-btn" data-view="chats"><span class="ico">✉</span><span>메시지</span></button>
+      <button class="nav-btn" data-view="friends"><span class="ico">◎</span><span>친구</span></button>
+      <button class="nav-btn" data-view="world"><span class="ico">⚙</span><span>세계</span></button>
+    </nav>
+    <button class="post-big" id="desktopCreate">게시하기</button>
+    <div class="profile-mini"><div class="avatar sm">나</div><div class="pm-copy"><b>나</b><div class="handle">@me</div></div></div>
+  </aside>
+
+  <main class="center">
+    <div class="mobile-top"><span class="mark">ROOMI</span><button class="weather-pill" id="mobileWeather">서울 · 불러오는 중</button></div>
+    <header class="topbar"><h1 id="pageTitle">홈</h1><button class="weather-pill" id="weatherPill">☀ 서울 · 불러오는 중</button></header>
+
+    <section id="feedView" class="view active">
+      <div class="composer">
+        <div class="avatar">나</div>
+        <div class="compose-body"><textarea id="postInput" placeholder="무슨 일이 있었나요?"></textarea><div class="compose-actions"><div class="icon-row"><button class="icon-btn">▧</button><button class="icon-btn">☺</button><button class="icon-btn">⌖</button></div><button class="btn-primary" id="postBtn">게시</button></div></div>
+      </div>
+      <div id="feedList"></div>
+    </section>
+
+    <section id="chatsView" class="view"><div class="chat-shell"><div id="chatList" class="chat-list"></div><div class="chat-panel"><div id="chatHeader" class="chat-head">대화를 선택하세요</div><div id="messages" class="messages"></div><div class="chat-input"><input id="chatInput" placeholder="메시지 보내기" disabled><button class="btn-primary" id="sendChatBtn" disabled>전송</button></div></div></div></section>
+
+    <section id="friendsView" class="view"><div class="section-title"><h2>친구</h2><p>친구를 눌러 프로필·말투·성격을 수정하거나 삭제할 수 있어요.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn-primary" id="addFriendBtn">+ 친구 추가</button><button class="btn-ghost" id="exportBtn" type="button">내보내기</button><button class="btn-ghost" id="importBtn" type="button">불러오기</button><input id="importFile" type="file" accept="application/json,.json" hidden></div></div><div id="friendGrid" class="friend-grid"></div></section>
+
+    <section id="worldView" class="view">
+  <div class="section-title">
+    <h2>세계 설정</h2>
+    <p>현실 시간·날씨와 앱 동작을 한곳에서 설정해요.</p>
+  </div>
+  <div class="settings">
+    <div class="setting">
+      <div>
+        <b>AI 두뇌</b>
+        <small id="aiStatus">휴대폰 렉을 막기 위해 무거운 로컬 AI 자동 로딩을 껐어요.</small>
+      </div>
+      <span class="status-chip">가벼운 모드</span>
+    </div>
+    <div class="setting">
+      <div>
+        <b>현재 모드</b>
+        <small>피드·DM·캐릭터·기억·시간·날씨는 즉시 작동합니다. AI 엔진은 나중에 교체할 수 있게 분리했어요.</small>
+      </div>
+    </div>
+    <div class="setting">
+      <div>
+        <b>AI 두뇌</b>
+        <small id="brainStatus">무료 문맥 엔진 준비 중…</small>
+      </div>
+      <span class="status-chip" id="brainBadge">문맥형</span>
+    </div>
+    <div class="setting">
+      <div>
+        <b>AI 자동 활동</b>
+        <small>열어둔 동안 활동하고, 다시 접속하면 부재중 시간을 따라잡아 글·댓글을 생성</small>
+      </div>
+      <label class="switch"><input id="autoAi" type="checkbox" checked><span></span></label>
+    </div>
+    <div class="setting">
+      <div>
+        <b>자동 활동 빈도</b>
+        <small>친구들이 글과 댓글을 얼마나 자주 만들지 설정</small>
+      </div>
+      <select id="activityLevel">
+        <option value="quiet">조용히</option>
+        <option value="normal" selected>보통</option>
+        <option value="active">활발하게</option>
+      </select>
+    </div>
+    <div class="setting">
+      <div>
+        <b>부재중 세계 따라잡기</b>
+        <small>앱을 닫았다 다시 열면 지난 시간만큼 몇 개의 활동을 만들어 둠</small>
+      </div>
+      <label class="switch"><input id="catchUpWorld" type="checkbox" checked><span></span></label>
+    </div>
+    <div class="setting">
+      <div>
+        <b>현실 시간 반영</b>
+        <small>선택한 도시의 현지 시간을 캐릭터 행동에 반영</small>
+      </div>
+      <label class="switch"><input id="realTime" type="checkbox" checked><span></span></label>
+    </div>
+    <div class="setting">
+      <div>
+        <b>실제 날씨 반영</b>
+        <small>선택한 도시의 실제 기온·체감온도·강수 여부 반영</small>
+      </div>
+      <label class="switch"><input id="realWeather" type="checkbox" checked><span></span></label>
+    </div>
+    <div class="setting">
+      <div>
+        <b>나라</b>
+        <small>날씨와 현지 시간을 가져올 나라</small>
+      </div>
+      <select id="countrySelect"></select>
+    </div>
+    <div class="setting">
+      <div>
+        <b>도시</b>
+        <small id="nowWorld">현지 시간 불러오는 중</small>
+      </div>
+      <select id="locationSelect"></select>
+    </div>
+    <div class="setting">
+      <div>
+        <b>사용자 댓글에는 반드시 답글</b>
+        <small>원글 작성자는 사용자의 댓글에 꼭 반응</small>
+      </div>
+      <label class="switch"><input id="mustReply" type="checkbox" checked><span></span></label>
+    </div>
+    <div class="setting">
+      <div>
+        <b>친구들도 가끔 끼어들기</b>
+        <small>원글 작성자 외 캐릭터가 0~2명 자연스럽게 댓글에 참여</small>
+      </div>
+      <label class="switch"><input id="bystanderReply" type="checkbox" checked><span></span></label>
+    </div>
+  </div>
+</section>
+  </main>
+
+  <aside class="right">
+    <input class="search" placeholder="ROOMI 검색">
+    <div class="box"><h3>지금 친구들</h3><div id="statusList"></div></div>
+    <div class="box world-card"><b>🌏 현실 동기화</b><small id="worldSummary">대한민국의 시간과 날씨를 친구들의 대화 맥락에 사용하고 있어요.</small></div>
+    <div class="box world-card"><b>🧠 무료 로컬 두뇌</b><small>AI가 이 기기 안에서 실행됩니다. API 키와 유료 서버 없이 캐릭터 설정·대화·게시물·기억을 함께 보고 답해요.</small></div>
+  </aside>
+</div>
+
+<nav class="mobile-nav"><button class="mnav active" data-view="feed">⌂</button><button class="mnav" data-view="chats">✉</button><button id="mobileCreate"><span class="create">＋</span></button><button class="mnav" data-view="friends">◎</button><button class="mnav" data-view="world">⚙</button></nav>
+
+<dialog id="friendDialog"><form method="dialog" id="friendForm" class="dialog"><h3 id="friendDialogTitle">캐릭터 추가</h3><p>올린 이미지는 피드·댓글·DM 전체에서 이 캐릭터의 프로필 사진으로 사용됩니다.</p><input id="editingId" type="hidden"><label class="upload"><input id="avatarInput" type="file" accept="image/*" hidden><img id="avatarPreview" alt="프로필"><span id="avatarPlaceholder">사진 선택</span></label><div class="form-grid"><label>이름<input id="nameInput" required placeholder="예: 한정훈"></label><label>아이디<input id="handleInput" required placeholder="예: jeonghun"></label><label>거주 국가<select id="friendCountry"></select></label>
+<label>거주 도시<select id="friendLocation"></select></label>
+<div class="field-note" id="friendWeatherPreview">이 캐릭터는 선택한 도시의 실제 날씨와 현지 시간을 사용해요.</div><label>현재 상태<input id="statusInput" placeholder="예: 집 · 음악 듣는 중"></label><label class="full">말투<textarea id="speechInput" placeholder="예: 차분한 존댓말. 질문에 먼저 직접 답함."></textarea></label><label class="full">성격·설정<textarea id="personalityInput" placeholder="성격, 습관, 관계에서 보이는 태도"></textarea></label></div><div class="dialog-actions" style="justify-content:space-between"><button class="btn-ghost" id="deleteFriendBtn" type="button" style="display:none;color:#f4212e">캐릭터 삭제</button><div style="display:flex;gap:8px;margin-left:auto"><button class="btn-ghost" value="cancel">취소</button><button class="btn-primary" id="saveFriendBtn" value="default">저장</button></div></div></form></dialog>
+<script src="./js/app.js"></script>
+<script src="./js/brain.js"></script>
+<script src="./js/autonomy.js"></script>
+</body>
+</html>
