@@ -295,10 +295,33 @@ async function aiReplyToSpecificComment(p,mine,target,targetChar){
  try{
    const reply=await callBrain(targetChar,mine.text,{channel:'comment_reply',post:p,thread:p.comments,targetComment:target,parentComment:target.replyTo?commentById(p,target.replyTo):null});
    delete p.replyStatus;
-   if(reply){
-     p.comments.push(newComment(targetChar.id,reply,mine.id));
-     remember(targetChar.id,`내 댓글 "${target.text}"에 사용자가 "${mine.text}"라고 답했고 나는 "${reply}"라고 답했다.`);
-   }
+   let finalReply=reply;
+
+if(!finalReply){
+  finalReply=lightweightReply(
+    targetChar,
+    mine.text,
+    {
+      channel:'comment_reply',
+      post:p,
+      thread:p.comments,
+      targetComment:target
+    }
+  );
+}
+
+if(!finalReply){
+  finalReply='응, 듣고 있어.';
+}
+
+p.comments.push(
+  newComment(targetChar.id,finalReply,mine.id)
+);
+
+remember(
+  targetChar.id,
+  `내 댓글 "${target.text}"에 사용자가 "${mine.text}"라고 답했고 나는 "${finalReply}"라고 답했다.`
+);
    const owner=getChar(p.char);
    if(owner&&owner.id!==targetChar.id&&owner.id!=='me'&&$('#bystanderReply')?.checked!==false&&Math.random()<.18){
      const extra=await callBrain(owner,mine.text,{channel:'thread_bystander',post:p,thread:p.comments,targetComment:target});
