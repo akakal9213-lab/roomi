@@ -262,7 +262,7 @@ function renderFeed(){
    <div class="replybox"><input data-post="${p.id}" placeholder="${target?`@${esc(getChar(target.who)?.name||'친구')}에게 답글`:'답글 게시하기'}"><button data-reply="${p.id}">답글</button></div>
    </div></div></article>`;
  }).join('');
- $$('[data-post-menu]').forEach(b=>b.onclick=()=>{
+$$('[data-post-menu]').forEach(b=>b.onclick=()=>{
   const id=Number(b.dataset.postMenu);
   const p=state.posts.find(x=>x.id===id);
 
@@ -277,6 +277,7 @@ function renderFeed(){
 
     if(text!==null && text.trim()){
       p.text=text.trim();
+      p.time='수정됨';
       save();
       renderFeed();
     }
@@ -285,6 +286,7 @@ function renderFeed(){
   if(choice==='2'){
     if(confirm('이 게시물을 삭제할까요?')){
       state.posts=state.posts.filter(x=>x.id!==id);
+      delete replyTargets[id];
       save();
       renderFeed();
     }
