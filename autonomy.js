@@ -138,7 +138,6 @@
       dayPart(c) +
       ". 현지 시각은 " +
       formatCharacterTime(c, true) +
-      ". 날씨는 " +
       weather.text +
       ". 현재 상태는 \"" +
       (c.status || "온라인") +
@@ -163,8 +162,6 @@
           channel:
             "autonomous_post",
 
-          weatherText:
-            situation
         }
       );
     } catch (error) {
@@ -180,7 +177,17 @@
         "에 잠깐 쉬는 중. " +
         "오늘은 생각보다 시간이 빨리 가네.";
     }
+const recentTexts = state.posts
+  .filter(p => p.char === c.id)
+  .slice(-5)
+  .map(p => String(p.text || '').trim());
 
+if (
+  recentTexts.includes(String(text).trim()) ||
+  /잘못 알아들|다시 말씀|다시 말해준 뜻|이해하겠습니다|이해할게/.test(text)
+) {
+  return null;
+}
     const post = {
       id:
         Date.now() +
