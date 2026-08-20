@@ -179,7 +179,7 @@ function lightweightReply(c,userText,context={}){
   where:F(`지금은 ${c.country||'대한민국'} ${c.loc}에 있습니다.`,`나 지금 ${c.country||'대한민국'} ${c.loc}에 있어.`),
   when:F('어느 일을 말씀하시는지 알려주시면 시간부터 확인해보겠습니다.','어느 일 말하는 거야?'),
   who:F('누구를 말씀하시는지 앞 상황을 조금만 더 알려주십시오.','누구 말하는 거야?'),
-  weather:F(`${c.loc} 쪽 날씨를 기준으로 보고 있습니다.`,`${c.loc} 쪽 날씨 보고 있어.`),
+  weather:F('날씨가 궁금하신 거군요.','날씨 궁금한 거야?'),
   correction:F('제가 방금 잘못 알아들었습니다. 다시 말씀해주신 뜻으로 이해하겠습니다.','내가 방금 잘못 알아들었네. 다시 말해준 뜻으로 이해할게.')
  };
  if(map[intent])return map[intent];
